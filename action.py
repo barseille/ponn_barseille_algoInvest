@@ -38,21 +38,45 @@ def recup_action_csv(nom_fichier):
             
         return actions
     
+def trouver_meilleure_combinaison(actions, budget):  
+    """Trouve la meilleure combinaison d'actions qui maximise le profit dans le budget donné"""
+    combinaisons = []
     
-def toutes_combinaisons(donnees: list) -> list:
-    """Retourne toutes les combinaisons possibles à partir d'une liste"""
-    toutes_combi = []
-    for n in range(1, len(donnees) + 1):
-        combinaisons = combinations(donnees, n)
-        for combi in combinaisons:
-            toutes_combi.append(combi)
-    return toutes_combi
+    for i in range(1, len(actions) + 1):
+        combinaisons.extend(combinations(actions, i))
+        
+    meilleure_combinaison = []
+    meilleur_profit = 0
+    investissement_total = 0
+    
+    for combinaison in combinaisons:
+        total_prix = sum([action.prix for action in combinaison])
+        if total_prix <= budget: 
+            total_profit = sum([action.profit() for action in combinaison])
+            if total_profit > meilleur_profit:
+                meilleure_combinaison = combinaison
+                meilleur_profit = total_profit
+                investissement_total = total_prix
+                        
+    return (meilleure_combinaison, investissement_total)
 
-data = []
-with open("data/action.csv", "r") as f:
-    reader = csv.reader(f)
-    for row in reader:
-        element = row[0]
-        data.append(element)
-combinaisons_possibles = toutes_combinaisons(data)
-print(combinaisons_possibles)
+def obtenir_liste_achat_actions():
+    liste_achat_actions = [action.nom for action in meilleure_combinaison]
+    return f"Voici la liste des actions à acheter : {liste_achat_actions}"
+
+def obtenir_profit_total():
+    profit = sum(action.profit() for action in meilleure_combinaison)
+    """ :.2f = float de deux chiffres après la virgule """
+    profit_total = f"Profit total sur 2 ans : {profit :.2f} euros"
+    return profit_total
+
+# Récupération des données à partir du fichier CSV
+actions = recup_action_csv("data/action.csv")
+
+# Recherche de la combinaison d'actions qui maximise le profit dans le budget de 500 euros
+meilleure_combinaison, investissement_total = trouver_meilleure_combinaison(actions, 500)
+
+print("Meilleure combinaison d'actions avec un budget de 500 euros : ")
+print(obtenir_liste_achat_actions())
+print(obtenir_profit_total())
+print(f"Investissement total : {investissement_total:.2f} euros")
