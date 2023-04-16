@@ -1,10 +1,13 @@
 from brute_force import recup_action_csv
+from performance import performance
+import cProfile
 
 
 # Récupération des actions depuis le fichier CSV
 actions1 = recup_action_csv("data/dataset1_Python+P7.csv")
 actions2 = recup_action_csv("data/dataset2_Python+P7.csv")
 
+@performance
 def acheter_actions(budget_max, actions):
     # Tri des actions par profit décroissant
     actions_triees = sorted(actions, reverse=True)
@@ -40,3 +43,6 @@ print("Actions achetées : ")
 for action in actions_achetees2:
     print(action.nom)
 
+# Profiler la fonction acheter_actions avec cProfile
+# cProfile.run('acheter_actions(500, actions1)')
+# cProfile.run('acheter_actions(500, actions2)')

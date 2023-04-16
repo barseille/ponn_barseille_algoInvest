@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from itertools import combinations
 import csv
+import cProfile
+from performance import performance
+
 
 @dataclass
 class Action:
@@ -24,7 +27,6 @@ def recup_action_csv(nom_fichier):
         data = csv.reader(f, delimiter=",")
         actions = []
         
-        
         # Lire la première ligne pour vérifier si elle contient des en-têtes
         headers = None
         try:
@@ -43,8 +45,10 @@ def recup_action_csv(nom_fichier):
             action = Action(nom, prix, benefice)
             actions.append(action)
 
-        return actions
+        return actions   
 
+
+@performance
 def trouver_meilleure_combinaison(actions, budget):  
     """Trouve la meilleure combinaison d'actions qui maximise le profit dans le budget donné"""
     
@@ -88,6 +92,7 @@ def obtenir_profit_total():
     profit_total = f"Profit total sur 2 ans : {profit :.2f} euros"
     return profit_total
 
+
 # Récupération des données à partir du fichier CSV
 actions = recup_action_csv("data/action.csv")
 
@@ -99,19 +104,5 @@ print(obtenir_liste_achat_actions())
 print(obtenir_profit_total())
 print(f"Investissement total : {investissement_total:.2f} euros")
 
-
-
-
-
-
-
-# test = ["a", "b", "c", "d"]
-# test_possible = []
-# for i in range(1, len(test) + 1):
-#     test_possible.extend(combinations(test, i))
-# print(test_possible)
-# [('a',), ('b',), ('c',), ('d',), 
-# ('a', 'b'), ('a', 'c'), ('a', 'd'), ('b', 'c'), ('b', 'd'), ('c', 'd'), ('a', 'b', 'c'), 
-# ('a', 'b', 'd'), ('a', 'c', 'd'), ('b', 'c', 'd'), 
-# ('a', 'b', 'c', 'd')]
-  
+# Décorateur cProfile.run() pour profiler la fonction trouver_meilleure_combinaison()
+cProfile.run('trouver_meilleure_combinaison(actions, 500)')
