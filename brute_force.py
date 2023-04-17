@@ -3,6 +3,7 @@ from itertools import combinations
 import csv
 import cProfile
 from performance import performance
+import math
 
 
 @dataclass
@@ -28,11 +29,11 @@ def recup_action_csv(nom_fichier):
         actions = []
         
         # Lire la première ligne pour vérifier si elle contient des en-têtes
-        headers = None
-        try:
-            headers = next(data)
-        except StopIteration:
-            pass
+        # headers = None
+        # try:
+        #     headers = next(data)
+        # except StopIteration:
+        #     pass
 
         for row in data:
             nom = row[0]
@@ -106,3 +107,15 @@ print(f"Investissement total : {investissement_total:.2f} euros")
 
 # Décorateur cProfile.run() pour profiler la fonction trouver_meilleure_combinaison()
 cProfile.run('trouver_meilleure_combinaison(actions, 500)')
+
+
+def compteur_combinaison(actions):
+    total = 0
+    nb_actions = len(actions)
+    for i in range(1, nb_actions + 1):
+        total += math.comb(nb_actions, i)
+    return total
+        
+print(compteur_combinaison(actions))
+
+
