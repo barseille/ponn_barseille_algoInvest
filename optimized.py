@@ -1,5 +1,5 @@
 from brute_force import recup_action_csv
-from performance import performance
+from decorateur import performance
 import cProfile
 
 
@@ -32,16 +32,20 @@ profit2 = sum(action.profit() for action in actions_achetees2)
 print("Résultats pour dataset1_Python+P7.csv :")
 print(f"Budget investi : {budget_investi1:.2f}")
 print(f"Profit total : {profit1:.2f}")
+liste1 = []
 print("Actions achetées : ")
 for action in actions_achetees1:
-    print(action.nom)
+    liste1.append(action.nom)
+print(f"{liste1}\n")
 
+liste2 = []
 print("Résultats pour dataset2_Python+P7.csv :")
 print(f"Budget investi : {budget_investi2:.2f}")
 print(f"Profit total : {profit2:.2f}")
 print("Actions achetées : ")
 for action in actions_achetees2:
-    print(action.nom)
+    liste2.append(action.nom)
+print(f"{liste2}\n")
 
 # Profiler la fonction acheter_actions avec cProfile
 # cProfile.run('acheter_actions(500, actions1)')

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from itertools import combinations
 import csv
 import cProfile
-from performance import performance
+from decorateur import performance
 import math
 
 
@@ -28,22 +28,24 @@ def recup_action_csv(nom_fichier):
         data = csv.reader(f, delimiter=",")
         actions = []
         
-        # Lire la première ligne pour vérifier si elle contient des en-têtes
-        # headers = None
-        # try:
-        #     headers = next(data)
-        # except StopIteration:
-        #     pass
+        if nom_fichier == "data/dataset1_Python+P7.csv" or nom_fichier == "data/dataset2_Python+P7.csv":
+        
+            # Lire la première ligne pour vérifier si elle contient des en-têtes
+            headers = None
+            try:
+                headers = next(data)
+            except StopIteration:
+                pass
 
         for row in data:
             nom = row[0]
             prix = float(row[1])
-            benefice = float(row[2])
+            pourcent = float(row[2])
 
-            if prix <= 0.0 or benefice <= 0.0:
+            if prix <= 0.0 or pourcent <= 0.0:
                 continue
 
-            action = Action(nom, prix, benefice)
+            action = Action(nom, prix, pourcent)
             actions.append(action)
 
         return actions   
@@ -108,14 +110,11 @@ print(f"Investissement total : {investissement_total:.2f} euros")
 # Décorateur cProfile.run() pour profiler la fonction trouver_meilleure_combinaison()
 cProfile.run('trouver_meilleure_combinaison(actions, 500)')
 
-
-def compteur_combinaison(actions):
-    total = 0
-    nb_actions = len(actions)
-    for i in range(1, nb_actions + 1):
-        total += math.comb(nb_actions, i)
-    return total
+# def compteur_combinaison():
+#     for i in range(1, 21):
+#         nb_combinations = 0
+#         for j in range(1, i+1):
+#             nb_combinations += math.comb(i, j)
+#         print(f"Nombre de combinaisons pour {i} actions : {nb_combinations}")
         
-print(compteur_combinaison(actions))
-
-
+# compteur_combinaison()
