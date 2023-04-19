@@ -1,16 +1,18 @@
 from dataclasses import dataclass
 from itertools import combinations
+from time import perf_counter
 import csv
-import cProfile
-from decorateur import performance
 import math
+import tracemalloc
 
 
 @dataclass
 class Action:
+    
     nom: str
     prix: float
     pourcent: float
+    
     # calcul du profit
     def profit(self):
         return self.prix * self.pourcent / 100
@@ -47,9 +49,26 @@ def recup_action_csv(nom_fichier):
 
             action = Action(nom, prix, pourcent)
             actions.append(action)
-
+            
         return actions   
 
+
+#  Mesurer le temps d'exécution
+def performance(fonction):
+    
+    """Surveiller le temps d'exécution d'une fonction"""
+    def wrapper(*args, **kawrgs):
+
+        # Enregistrer le temps actuel avant l'exécution de la fonction passée en argument
+        temps1 = perf_counter()    
+        # Appeler la fonction passée en argument avec les arguments et les mots-clés fournis
+        resultat = fonction(*args, **kawrgs)  
+        # Enregistrer le temps actuel après l'exécution de la fonction passée en argument
+        temps2 = perf_counter()
+        print(f"\nLa fonction {fonction.__name__} a pris {round(temps2 - temps1, 5)} secondes")
+        return resultat
+   
+    return wrapper
 
 @performance
 def trouver_meilleure_combinaison(actions, budget):  
@@ -60,7 +79,7 @@ def trouver_meilleure_combinaison(actions, budget):
     
     #  fonction combinations pour générer toutes les combinaisons possibles
     for i in range(1, len(actions) + 1):
-        combinaisons.extend(combinations(actions, i))
+        combinaisons.extend(combinations(actions, i)) # O(2^n) : boucles imbriquées
         
     meilleure_combinaison = []
     meilleur_profit = 0
@@ -85,30 +104,34 @@ def trouver_meilleure_combinaison(actions, budget):
                         
     return (meilleure_combinaison, investissement_total)
 
-def obtenir_liste_achat_actions():
+
+def main():
+    tracemalloc.start()
+    
+    # Récupération des données à partir du fichier CSV
+    actions = recup_action_csv("data/action.csv")
+
+    # Recherche de la combinaison d'actions qui maximise le profit dans le budget de 500 euros
+    meilleure_combinaison, investissement_total = trouver_meilleure_combinaison(actions, 500) # O(2^n)/ O(n^2)
+    
     liste_achat_actions = [action.nom for action in meilleure_combinaison]
-    return f"Voici la liste des actions à acheter : {liste_achat_actions}"
-
-def obtenir_profit_total():
     profit = sum(action.profit() for action in meilleure_combinaison)
-    """ :.2f = float de deux chiffres après la virgule """
-    profit_total = f"Profit total sur 2 ans : {profit :.2f} euros"
-    return profit_total
 
 
-# Récupération des données à partir du fichier CSV
-actions = recup_action_csv("data/action.csv")
+    print("Meilleure combinaison d'actions avec un budget de 500 : ")
+    print(f"Voici la liste des actions à acheter : {liste_achat_actions}")
+    print(f"Profit total sur 2 ans : {profit :.2f} euros")
+    print(f"Investissement total : {investissement_total:.2f} euros")
+    
+    # Obtenez la quantité de mémoire utilisée pendant l'exécution de la fonction
+    memoire_courante, memoire_max = tracemalloc.get_traced_memory()
+    print(f"Utilisation de mémoire courante : {memoire_courante / 10**6} MB")
+    print(f"Utilisation de mémoire maximale : {memoire_max / 10**6} MB")
+    
+    tracemalloc.stop()
 
-# Recherche de la combinaison d'actions qui maximise le profit dans le budget de 500 euros
-meilleure_combinaison, investissement_total = trouver_meilleure_combinaison(actions, 500)
-
-print("Meilleure combinaison d'actions avec un budget de 500 : ")
-print(obtenir_liste_achat_actions())
-print(obtenir_profit_total())
-print(f"Investissement total : {investissement_total:.2f} euros")
-
-# Décorateur cProfile.run() pour profiler la fonction trouver_meilleure_combinaison()
-cProfile.run('trouver_meilleure_combinaison(actions, 500)')
+if __name__ == "__main__":
+    main()
 
 # def compteur_combinaison():
 #     for i in range(1, 21):
@@ -118,3 +141,5 @@ cProfile.run('trouver_meilleure_combinaison(actions, 500)')
 #         print(f"Nombre de combinaisons pour {i} actions : {nb_combinations}")
         
 # compteur_combinaison()
+
+
