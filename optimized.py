@@ -1,7 +1,6 @@
 from brute_force import recup_action_csv, performance
 import tracemalloc
 
-
 @performance
 def acheter_actions(budget_max, actions):
     # Tri des actions par profit décroissant
@@ -10,7 +9,7 @@ def acheter_actions(budget_max, actions):
     actions_achetees = []
     budget_investi = 0
     
-    #  O(n) = boucle for
+    # O(n) = boucle for
     for action in actions_triees:
         if action.prix <= budget_max - budget_investi:
             actions_achetees.append(action)
@@ -20,15 +19,14 @@ def acheter_actions(budget_max, actions):
 
 def afficher_resultats(actions_achetees, budget_investi):
     
-    liste = []
+    actions_choisis = []
     print(f"Budget investi : {budget_investi:.2f}")
     print(f"Profit total : {sum(action.profit() for action in actions_achetees) :.2f}")
     print("Actions achetées : ")
     for action in actions_achetees:
-        liste.append(action.nom)
-    print(f"{liste}\n")
-    
-    
+        actions_choisis.append(action.nom)
+    print(f"{actions_choisis}\n")
+       
 def main():
     
     tracemalloc.start()

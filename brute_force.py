@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from itertools import combinations
 from time import perf_counter
 import csv
-import math
 import tracemalloc
+# import math
 
 
 @dataclass
@@ -24,14 +24,13 @@ class Action:
     def __lt__(self, autre_action):
         return self.pourcent < autre_action.pourcent
 
-
 def recup_action_csv(nom_fichier):
+    
     with open(nom_fichier, "r") as f:
         data = csv.reader(f, delimiter=",")
         actions = []
-        
-        if nom_fichier == "data/dataset1_Python+P7.csv" or nom_fichier == "data/dataset2_Python+P7.csv":
-        
+           
+        if nom_fichier == "data/dataset1_Python+P7.csv" or nom_fichier == "data/dataset2_Python+P7.csv":      
             # Lire la première ligne pour vérifier si elle contient des en-têtes
             headers = None
             try:
@@ -44,14 +43,13 @@ def recup_action_csv(nom_fichier):
             prix = float(row[1])
             pourcent = float(row[2])
 
-            if prix <= 0.0 or pourcent <= 0.0:
-                continue
+            if prix <= 0.0 or pourcent <= 0.0:  
+                continue        
 
             action = Action(nom, prix, pourcent)
             actions.append(action)
-            
+        
         return actions   
-
 
 #  Mesurer le temps d'exécution
 def performance(fonction):
@@ -61,10 +59,13 @@ def performance(fonction):
 
         # Enregistrer le temps actuel avant l'exécution de la fonction passée en argument
         temps1 = perf_counter()    
+        
         # Appeler la fonction passée en argument avec les arguments et les mots-clés fournis
-        resultat = fonction(*args, **kawrgs)  
+        resultat = fonction(*args, **kawrgs) 
+         
         # Enregistrer le temps actuel après l'exécution de la fonction passée en argument
         temps2 = perf_counter()
+        
         print(f"\nLa fonction {fonction.__name__} a pris {round(temps2 - temps1, 5)} secondes")
         return resultat
    
@@ -79,7 +80,7 @@ def trouver_meilleure_combinaison(actions, budget):
     
     #  fonction combinations pour générer toutes les combinaisons possibles
     for i in range(1, len(actions) + 1):
-        combinaisons.extend(combinations(actions, i)) # O(2^n) : boucles imbriquées
+        combinaisons.extend(combinations(actions, i)) # O(2^n) 
         
     meilleure_combinaison = []
     meilleur_profit = 0
