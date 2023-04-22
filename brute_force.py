@@ -30,13 +30,12 @@ def recup_action_csv(nom_fichier):
         data = csv.reader(f, delimiter=",")
         actions = []
            
-        if nom_fichier == "data/dataset1_Python+P7.csv" or nom_fichier == "data/dataset2_Python+P7.csv":      
-            # Lire la première ligne pour vérifier si elle contient des en-têtes
-            headers = None
-            try:
-                headers = next(data)
-            except StopIteration:
-                pass
+        # Lire la première ligne pour vérifier si elle contient des en-têtes
+        headers = None
+        try:
+            headers = next(data)
+        except StopIteration:
+            pass
 
         for row in data:
             nom = row[0]
@@ -117,7 +116,6 @@ def main():
     
     liste_achat_actions = [action.nom for action in meilleure_combinaison]
     profit = sum(action.profit() for action in meilleure_combinaison)
-
 
     print("Meilleure combinaison d'actions avec un budget de 500 : ")
     print(f"Voici la liste des actions à acheter : {liste_achat_actions}")
