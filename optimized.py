@@ -1,5 +1,73 @@
-from brute_force import recup_action_csv, performance
 import tracemalloc
+from dataclasses import dataclass
+from time import perf_counter
+import csv
+import tracemalloc
+
+
+@dataclass
+class Action:
+    
+    nom: str
+    prix: float
+    pourcent: float
+    
+    # calcul du profit
+    def profit(self):
+        return self.prix * self.pourcent / 100
+
+    def __str__(self):
+        return f"nom : {self.nom}, prix : {self.prix}, pourcent : {self.pourcent}%, profit : {self.profit():.2f}"
+
+    # Comparaison entre deux instances
+    def __lt__(self, autre_action):
+        return self.pourcent < autre_action.pourcent
+
+def recup_action_csv(nom_fichier):
+    
+    with open(nom_fichier, "r") as f:
+        data = csv.reader(f, delimiter=",")
+        actions = []
+           
+        # Lire la première ligne pour vérifier si elle contient des en-têtes
+        headers = None
+        try:
+            headers = next(data)
+        except StopIteration:
+            pass
+
+        for row in data:
+            nom = row[0]
+            prix = float(row[1])
+            pourcent = float(row[2])
+
+            if prix <= 0.0 or pourcent <= 0.0:  
+                continue        
+
+            action = Action(nom, prix, pourcent)
+            actions.append(action)
+        
+        return actions   
+
+#  Mesurer le temps d'exécution
+def performance(fonction):
+    
+    """Surveiller le temps d'exécution d'une fonction"""
+    def wrapper(*args, **kawrgs):
+
+        # Enregistrer le temps actuel avant l'exécution de la fonction passée en argument
+        temps1 = perf_counter()    
+        
+        # Appeler la fonction passée en argument avec les arguments et les mots-clés fournis
+        resultat = fonction(*args, **kawrgs) 
+         
+        # Enregistrer le temps actuel après l'exécution de la fonction passée en argument
+        temps2 = perf_counter()
+        
+        print(f"\nLa fonction {fonction.__name__} a pris {round(temps2 - temps1, 5)} secondes")
+        return resultat
+   
+    return wrapper
 
 @performance
 def acheter_actions(budget_max, actions):
